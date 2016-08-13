@@ -11,7 +11,6 @@
 	<script>
 		(function() {
 			'use strict';
-			 
 			var scene;
 			var box;
 			var camera;
@@ -23,13 +22,11 @@
 			//scene
 			scene = new THREE.Scene();
 
+
 			//mesh
-			// -geometry 形状
-			// -material 材質
-			box = new THREE.Mesh(
-				new THREE.BoxGeometry(50, 50, 50),
-				new THREE.MeshLambertMaterial({color: 0xff0000})
-			);
+			// -geometry
+			// -material
+			box = new THREE.Mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLambertMaterial({color: 0xff0000}));
 			box.position.set(0,0,0);
 			scene.add(box);
 
@@ -41,13 +38,16 @@
 
 			//renderer
 			renderer = new THREE.WebGLRenderer({ antialias: true});
-			renderer.setSize(width/height);
+			renderer.setSize(width, height);
 			renderer.setClearColor(0xefefef);
 			renderer.setPixelRatio(window.devicePixelRatio);
 
 			document.getElementById('stage').appendChild(renderer.domElement);
 
-			renderer.render(scene, camera);
+
+			renderer.render(scene, camera); 
+			
+
 		})();
 	</script>
 </body>

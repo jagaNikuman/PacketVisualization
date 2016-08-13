@@ -1,6 +1,3 @@
-
-
-
 var scene;
 var box;
 var camera;
@@ -16,7 +13,7 @@ scene = new THREE.Scene();
 //mesh
 // -geometry
 // -material
-box = new THREE.mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLmbertMaterial({color: 0xff0000}));
+box = new THREE.Mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLambertMaterial({color: 0xff0000}));
 box.position.set(0,0,0);
 scene.add(box);
 
@@ -28,11 +25,11 @@ camera.lookAt(scene.position);
 
 //renderer
 renderer = new THREE.WebGLRenderer({ antialias: true});
-renderer.setSize(width/height);
+renderer.setSize(width, height);
 renderer.setClearColor(0xefefef);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 document.getElementById('stage').appendChild(renderer.domElement);
 
 
-renderer.render(scene, camera);
+renderer.render(scene, camera); 
