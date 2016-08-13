@@ -13,7 +13,10 @@ scene = new THREE.Scene();
 //mesh
 // -geometry
 // -material
-box = new THREE.Mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLambertMaterial({color: 0xff0000}));
+box = new THREE.Mesh(
+	new THREE.BoxGeometry(50,50,50),
+	new THREE.MeshLambertMaterial({color: 0xff0000})
+);
 box.position.set(0,0,0);
 scene.add(box);
 
