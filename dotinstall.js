@@ -16,7 +16,7 @@ scene = new THREE.Scene();
 //mesh
 // -geometry
 // -material
-box = new THREE.mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLmbertMaterial({color: 0xff0000});
+box = new THREE.mesh(new THREE.BoxGeometry(50,50,50), new THREE.MeshLmbertMaterial({color: 0xff0000}));
 box.position.set(0,0,0);
 scene.add(box);
 
@@ -33,5 +33,6 @@ renderer.setClearColor(0xefefef);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 document.getElementById('stage').appendChild(renderer.domElement);
+
 
 renderer.render(scene, camera);
