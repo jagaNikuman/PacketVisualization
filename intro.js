@@ -15,6 +15,7 @@ var main = function(){
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(width, height);
+    renderer.setClearColor(0xefefef);
     document.body.appendChild(renderer.domElement);
 
     var directionalLight = new THREE.DirectionalLight(0xffffff);
