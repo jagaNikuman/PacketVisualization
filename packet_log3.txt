@@ -39,3 +39,7 @@
 09:49:04.616754 IP localhost.localdomain > 192.168.0.3: ICMP echo request, id 14730, seq 39, length 64
 09:49:05.616891 IP localhost.localdomain > 192.168.0.3: ICMP echo request, id 14730, seq 40, length 64
 09:49:06.616777 IP localhost.localdomain > 192.168.0.3: ICMP echo request, id 14730, seq 41, length 64
+09:49:07.616681 IP localhost.localdomain > 192.168.0.3: ICMP echo request, id 14730, seq 42, length 64
+09:49:08.616685 IP localhost.localdomain > 192.168.0.3: ICMP echo request, id 14730, seq 43, length 64
+
+(?= IP)(.*).*(?=>)
