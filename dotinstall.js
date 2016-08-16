@@ -60,13 +60,6 @@ line = new THREE.Line(lineGeometry, material);
 scene.add(line);
 
 
-// var box2 = new THREE.Mesh(
-// 	new THREE.BoxGeometry(20,20,20),
-// 	new THREE.MeshLambertMaterial({color: 0x66cdaa })
-// );
-// box2.position.set(-10,10,10);
-// scene.add(box2);
-
 //plane
 var plane = new THREE.Mesh(
 	new THREE.PlaneGeometry(100, 50),
