@@ -49,6 +49,13 @@ box5 = new THREE.Mesh(
 box5.position.set(40,5,0);
 scene.add(box5);
 
+//sphere
+var sphere = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshPhongMaterial({color: 0xffffff}));
+sphere.castShadow = true;
+sphere.receiveShadow = true;
+scene.add(sphere);
+sphere.position.set(0,20,0);
+
 
 //line 
 
@@ -62,7 +69,7 @@ scene.add(line);
 
 //plane
 var plane = new THREE.Mesh(
-	new THREE.PlaneGeometry(100, 50),
+	new THREE.PlaneGeometry(500, 500),
 	new THREE.MeshBasicMaterial({color: 0xcccccc})
 );
 plane.rotation.x = -0.5* Math.PI;
