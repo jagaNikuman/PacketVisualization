@@ -100,41 +100,83 @@ sphere.position.set(0,30,-30);
 
 //line 
 
-var lineGeometry = new THREE.Geometry();
-lineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize/2,box2.position.z));
-lineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize + 10,box2.position.z));
+var staticLineGeometry = new THREE.Geometry();
+staticLineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize/2,box2.position.z));
+staticLineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize + 10,box2.position.z));
 var material = new THREE.LineBasicMaterial({color: 0x00FFFF, linewidth: 10});
-line = new THREE.Line(lineGeometry, material);
-scene.add(line);
+var staticLine = new THREE.Line(staticLineGeometry, material);
+scene.add(staticLine);
 
 
 // dynamic line
-var dynamicLinePoints = 30;
-var geometry = new THREE.BufferGeometry();
-var positions = new Float32Array(dynamicLinePoints * 32);
-geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-var array = geometry.attributes.position.array;
-array[0]=0;
-array[1]=0;
-array[2]=0;
-array[3]=-10;
-array[4]=0;
-array[5]=0;
-array[6]=-20;
-array[7]=0;
-array[8]=0;
-array[9]=-30;
-array[10]=0;
-array[11]=0;
-array[12]=-40;
-array[13]=0;
-array[14]=0;
-geometry.addGroup(0, 2, 0);
+var dynamicLinePoints = 1000;
+var dynamicLineGeometry = new THREE.BufferGeometry();
+var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
+dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
+var array = dynamicLineGeometry.attributes.position.array;
 
-var material = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 5});
-var line = new THREE.Line(geometry, material);
 
-scene.add(line);
+var dynamicLineLengthOffset = 1;
+var dynamicLineLength = 0;
+var dynamicLineCounter = 0;
+var _debugCounter = 0;
+console.log("heightArray");
+var dynamicLineHeightMin = box1.position.y + boxSize/2;
+var dynamicLineHeightMax = sphere.position.y;
+var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
+dynamicLineLength = dynamicLineHeightLength;
+console.log(dynamicLineHeightLength);
+for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
+	array[i-3] = box1.position.x;		//x
+	array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
+	array[i-1] = 0;		//z
+	dynamicLineCounter++;
+	console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+	_debugCounter++;
+
+	// console.log(i);
+
+}
+
+console.log("depthArray");
+var dynamicLineDepthMin = sphere.position.z;
+var dynamicLineDepthMax = box1.position.z + boxSize/2;
+var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
+dynamicLineLength += dynamicLineDepthLength;
+dynamicLineCounter = 0;
+console.log(dynamicLineDepthLength);
+for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
+	array[i-3] = box1.position.x;		//x
+	array[i-2] = dynamicLineHeightMax;		//y
+	array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
+	dynamicLineCounter++;
+	console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+	_debugCounter++;
+	// console.log(i);
+}
+
+console.log("widthArray");
+var dynamicLineWidthMin = box1.position.x + boxSize/2;
+var dynamicLineWidthMax = sphere.position.x;
+var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
+dynamicLineLength += dynamicLineWidthLength;
+dynamicLineCounter = 0;
+console.log(dynamicLineWidthLength);
+for(var i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
+	array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
+	array[i-2] = dynamicLineHeightMax;		//y
+	array[i-1] = dynamicLineDepthMin;		//z
+	dynamicLineCounter++;
+	console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+	_debugCounter++;
+	// console.log(i);
+}
+dynamicLineGeometry.addGroup(0, 2, 0);
+
+var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 5});
+var dynamicLine = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
+
+scene.add(dynamicLine);
 
 
 
@@ -151,7 +193,7 @@ scene.add(plane);
 
 //camera
 camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
-camera.position.set(10, 50, 100);
+camera.position.set(0, 70, 125);
 camera.lookAt(scene.position);
 
 
@@ -195,9 +237,9 @@ function Sleep( T ){
 var i = 1;
 function loop() {
 	requestAnimationFrame(loop);
-	line.geometry.setDrawRange(0,i);
+	dynamicLine.geometry.setDrawRange(i,i+10);
 	i++;
-	// Sleep( 1 );
+	Sleep( 0.05 );
 	controls.update();
 	renderer.render(scene, camera);
 }
