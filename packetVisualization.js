@@ -17,7 +17,7 @@ var boxSize = 5;
 var boxSideOffset = 5;
 var boxHeightOffset = 5;
 var boxArray = Array();
-var boxNum = 20;
+var boxNum = 10;
 for(var i = 0; i < boxNum; i++) {
 	var box = new THREE.Mesh(
 		new THREE.BoxGeometry(boxSize, boxSize, boxSize),
@@ -39,660 +39,91 @@ sphere.receiveShadow = true;
 scene.add(sphere);
 sphere.position.set(0,30,-30);
 
+// dynamic line
+var dynamicLineArray = new Array();
+var dynamicLinePointsArray = new Array();
+
+for(var num = 0; num < 10; num++) {
+	function drawDynamicLine() {
+		dynamicLinePointsArray[num] = 100;
+		var dynamicLineGeometry = new THREE.BufferGeometry();
+		var dynamicLinePositions = new Float32Array(dynamicLinePointsArray[num] * 32);
+		dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
+		var array = dynamicLineGeometry.attributes.position.array;
+
+		var dynamicLineLengthOffset = 1;
+		var dynamicLineLength = 0;
+		var dynamicLineCounter = 0;
+		var _debugCounter = 0;
+		console.log("heightArray");
+		var dynamicLineHeightMin = boxArray[num].position.y + boxSize/2;
+		var dynamicLineHeightMax = sphere.position.y;
+		var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
+		dynamicLineLength = dynamicLineHeightLength;
+		console.log(dynamicLineHeightLength);
+		for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
+			array[i-3] = boxArray[num].position.x;		//x
+			array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
+			array[i-1] = 0;		//z
+			dynamicLineCounter++;
+			console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+			_debugCounter++;
+
+			// console.log(i);
+
+		}
+
+		console.log("depthArray");
+		var dynamicLineDepthMin = sphere.position.z;
+		var dynamicLineDepthMax = boxArray[num].position.z + boxSize/2;
+		var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
+		dynamicLineLength += dynamicLineDepthLength;
+		dynamicLineCounter = 0;
+		console.log(dynamicLineDepthLength);
+		for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
+			array[i-3] = boxArray[num].position.x;		//x
+			array[i-2] = dynamicLineHeightMax;		//y
+			array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
+			dynamicLineCounter++;
+			console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+			_debugCounter++;
+			// console.log(i);
+		}
+
+		console.log("widthArray");
+		var dynamicLineWidthMin = boxArray[num].position.x + boxSize/2;
+		var dynamicLineWidthMax = sphere.position.x;
+		var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
+		dynamicLineLength += dynamicLineWidthLength;
+		dynamicLineCounter = 0;
+		console.log(dynamicLineWidthLength);
+		var i;
+		for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
+			if(num < boxNum/2) {
+				array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
+				array[i-2] = dynamicLineHeightMax;		//y
+				array[i-1] = dynamicLineDepthMin;		//z
+			}else{
+				array[i-3] = dynamicLineWidthMax - dynamicLineLengthOffset*dynamicLineCounter;		//x
+				array[i-2] = dynamicLineHeightMax;		//y
+				array[i-1] = dynamicLineDepthMin;		//z
+			}
+			dynamicLineCounter++;
+			console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+			_debugCounter++;
+			// console.log(i);
+		}
+		dynamicLinePointsArray[num] = i/3;
+		dynamicLineGeometry.addGroup(0, 2, 0);
+
+		var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 1});
+		dynamicLineArray[num] = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
+
+		scene.add(dynamicLineArray[num]);
+	};
+	drawDynamicLine();
+}
 
-//line 
-
-// var staticLineGeometry = new THREE.Geometry();
-// staticLineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize/2,box2.position.z));
-// staticLineGeometry.vertices.push(new THREE.Vector3(box2.position.x,box2.position.y + boxSize + 10,box2.position.z));
-// var material = new THREE.LineBasicMaterial({color: 0x00FFFF, linewidth: 10});
-// var staticLine = new THREE.Line(staticLineGeometry, material);
-// scene.add(staticLine);
-
-
-// // dynamic line
-// var dynamicLine;
-// var dynamicLinePoints;
-// function drawDynamicLine() {
-// 	dynamicLinePoints = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box1.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box1.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box1.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box1.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMin = box1.position.x + boxSize/2;
-// 	var dynamicLineWidthMax = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLinePoints = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 1});
-// 	dynamicLine = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine);
-
-// };
-// drawDynamicLine();
-
-// //##############################################################DynamicLine2#######################################################
-// var dynamicLine2;
-// var dynamicLine2Points;
-// function drawDynamicLine2() {
-// 	dynamicLine2Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box2.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box2.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box2.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box2.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMin = box2.position.x + boxSize/2;
-// 	var dynamicLineWidthMax = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine2Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 1});
-// 	dynamicLine2 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine2);
-
-// };
-// drawDynamicLine2();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine3#######################################################
-// var dynamicLine3;
-// var dynamicLine3Points;
-// function drawDynamicLine3() {
-// 	dynamicLine3Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box3.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box3.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box3.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box3.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMin = box3.position.x + boxSize/2;
-// 	var dynamicLineWidthMax = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine3Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine3 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine3);
-
-// };
-// drawDynamicLine3();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine4#######################################################
-// var dynamicLine4;
-// var dynamicLine4Points;
-// function drawDynamicLine4() {
-// 	dynamicLine4Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box4.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box4.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box4.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box4.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMin = box4.position.x + boxSize/2;
-// 	var dynamicLineWidthMax = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine4Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine4 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine4);
-
-// };
-// drawDynamicLine4();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine5#######################################################
-// var dynamicLine5;
-// var dynamicLine5Points = 88;
-// function drawDynamicLine5() {
-// 	dynamicLine5Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box2.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box5.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box5.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box5.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMin = box5.position.x + boxSize/2;
-// 	var dynamicLineWidthMax = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMin + dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine5Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine5 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine5);
-
-// };
-// drawDynamicLine5();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine6#######################################################
-// var dynamicLine6;
-// var dynamicLine6Points;
-// function drawDynamicLine6() {
-// 	dynamicLine6Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box6.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box6.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box6.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box6.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMax = box6.position.x + boxSize/2;
-// 	var dynamicLineWidthMin = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i = 0;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMax - dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine6Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine6 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine6);
-
-// };
-// drawDynamicLine6();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine6#######################################################
-// var dynamicLine7;
-// var dynamicLine7Points;
-// function drawDynamicLine7() {
-// 	dynamicLine7Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box7.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box7.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box7.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box7.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMax = box7.position.x + boxSize/2;
-// 	var dynamicLineWidthMin = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i = 0;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMax - dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine7Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine7 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine7);
-
-// };
-// drawDynamicLine7();
-
-// //###########################################################################################################################
-
-
-// //##############################################################DynamicLine8#######################################################
-// var dynamicLine8;
-// var dynamicLine8Points;
-// function drawDynamicLine8() {
-// 	dynamicLine8Points = 88;
-// 	var dynamicLineGeometry = new THREE.BufferGeometry();
-// 	var dynamicLinePositions = new Float32Array(dynamicLinePoints * 32);
-// 	dynamicLineGeometry.addAttribute('position', new THREE.BufferAttribute(dynamicLinePositions, 3));
-// 	var array = dynamicLineGeometry.attributes.position.array;
-
-
-// 	var dynamicLineLengthOffset = 1;
-// 	var dynamicLineLength = 0;
-// 	var dynamicLineCounter = 0;
-// 	var _debugCounter = 0;
-// 	console.log("heightArray");
-// 	var dynamicLineHeightMin = box8.position.y + boxSize/2;
-// 	var dynamicLineHeightMax = sphere.position.y;
-// 	var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
-// 	dynamicLineLength = dynamicLineHeightLength;
-// 	console.log(dynamicLineHeightLength);
-// 	for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
-// 		array[i-3] = box8.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
-// 		array[i-1] = 0;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-
-// 		// console.log(i);
-
-// 	}
-
-// 	console.log("depthArray");
-// 	var dynamicLineDepthMin = sphere.position.z;
-// 	var dynamicLineDepthMax = box8.position.z + boxSize/2;
-// 	var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
-// 	dynamicLineLength += dynamicLineDepthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineDepthLength);
-// 	for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
-// 		array[i-3] = box8.position.x;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-
-// 	console.log("widthArray");
-// 	var dynamicLineWidthMax = box8.position.x + boxSize/2;
-// 	var dynamicLineWidthMin = sphere.position.x;
-// 	var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
-// 	dynamicLineLength += dynamicLineWidthLength;
-// 	dynamicLineCounter = 0;
-// 	console.log(dynamicLineWidthLength);
-// 	var i = 0;
-// 	for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
-// 		array[i-3] = dynamicLineWidthMax - dynamicLineLengthOffset*dynamicLineCounter;		//x
-// 		array[i-2] = dynamicLineHeightMax;		//y
-// 		array[i-1] = dynamicLineDepthMin;		//z
-// 		dynamicLineCounter++;
-// 		console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
-// 		_debugCounter++;
-// 		// console.log(i);
-// 	}
-// 	dynamicLine8Points = i/3;
-// 	dynamicLineGeometry.addGroup(0, 2, 0);
-
-// 	var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 100});
-// 	dynamicLine8 = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
-
-// 	scene.add(dynamicLine8);
-
-// };
-// drawDynamicLine8();
-
-// //###########################################################################################################################
 
 //plane
 var plane = new THREE.Mesh(
