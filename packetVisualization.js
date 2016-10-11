@@ -10,6 +10,40 @@ var height = window.parent.screen.height;
 //scene
 scene = new THREE.Scene();
 
+//renderer
+renderer = new THREE.WebGLRenderer({ antialias: true});
+renderer.setSize(width, height);
+renderer.setClearColor(0x3B3B3D);
+renderer.setPixelRatio(window.devicePixelRatio);
+
+document.getElementById('stage').appendChild(renderer.domElement);
+//plane
+var plane = new THREE.Mesh(
+	new THREE.PlaneGeometry(500, 500),
+	new THREE.MeshBasicMaterial({color: 0xcccccc})
+);
+plane.rotation.x = -0.5* Math.PI;
+scene.add(plane);
+
+//camera
+camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
+camera.position.set(0, 70, 125);
+camera.lookAt(scene.position);
+
+//mouse contol
+var controls = new THREE.OrbitControls(camera);
+
+//light
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+    directionalLight.position.set(0, 0.7, 0.7);
+    scene.add(directionalLight);
+// var ambientLight = new THREE.AmbientLight(0xffffff); // 光源色を指定して生成
+// scene.add(ambientLight);
+
+//axes
+var axes = new THREE.AxisHelper(2000);
+scene.add(axes);
+
 //mesh
 // -geometry
 // -material
@@ -18,10 +52,14 @@ var boxSideOffset = 5;
 var boxHeightOffset = 5;
 var boxArray = Array();
 var boxNum = 30;
+
+var loader = new THREE.TextureLoader();
+loader.crossOrigin = 'Anonymous';
+var mapTexture = loader.load( 'texture/mario.jpg');
 for(var i = 0; i < boxNum; i++) {
 	var box = new THREE.Mesh(
 		new THREE.BoxGeometry(boxSize, boxSize, boxSize),
-		new THREE.MeshLambertMaterial({color: 0x9aa1ac, wireframe: false})
+		new THREE.MeshLambertMaterial({color: 0x9aa1ac, wireframe: false,})
 	);
 	if(i < boxNum/2) {
 		box.position.set(-boxSideOffset * (boxNum - (i * 2 + 1)), boxHeightOffset, 0); 
@@ -55,49 +93,49 @@ for(var num = 0; num < boxNum; num++) {
 		var dynamicLineLength = 0;
 		var dynamicLineCounter = 0;
 		var _debugCounter = 0;
-		console.log("heightArray");
+		// console.log("heightArray");
 		var dynamicLineHeightMin = boxArray[num].position.y + boxSize/2;
 		var dynamicLineHeightMax = sphere.position.y;
 		var dynamicLineHeightLength = dynamicLineHeightMax - dynamicLineHeightMin;
 		dynamicLineLength = dynamicLineHeightLength;
-		console.log(dynamicLineHeightLength);
+		// console.log(dynamicLineHeightLength);
 		for(var i=3; i < dynamicLineLength*3 +3; i = i+3) {
 			array[i-3] = boxArray[num].position.x;		//x
 			array[i-2] = dynamicLineHeightMin + dynamicLineLengthOffset*dynamicLineCounter;		//y
 			array[i-1] = 0;		//z
 			dynamicLineCounter++;
-			console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+			// console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
 			_debugCounter++;
 
 			// console.log(i);
 
 		}
 
-		console.log("depthArray");
+		// console.log("depthArray");
 		var dynamicLineDepthMin = sphere.position.z;
 		var dynamicLineDepthMax = boxArray[num].position.z + boxSize/2;
 		var dynamicLineDepthLength = dynamicLineDepthMax - dynamicLineDepthMin;
 		dynamicLineLength += dynamicLineDepthLength;
 		dynamicLineCounter = 0;
-		console.log(dynamicLineDepthLength);
+		// console.log(dynamicLineDepthLength);
 		for(var i=Math.floor((dynamicLineLength - dynamicLineDepthLength)*3 +5); i < dynamicLineLength*3 +5; i = i+3) {
 			array[i-3] = boxArray[num].position.x;		//x
 			array[i-2] = dynamicLineHeightMax;		//y
 			array[i-1] = dynamicLineDepthMax - dynamicLineLengthOffset*dynamicLineCounter;		//z
 			dynamicLineCounter++;
-			console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+			// console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
 			_debugCounter++;
 			// console.log(i);
 		}
 
-		console.log("widthArray");
+		// console.log("widthArray");
 		if(num < boxNum/2) {
 			var dynamicLineWidthMin = boxArray[num].position.x + boxSize/2;
 			var dynamicLineWidthMax = sphere.position.x;
 			var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
 			dynamicLineLength += dynamicLineWidthLength;
 			dynamicLineCounter = 0;
-			console.log(dynamicLineWidthLength);
+			// console.log(dynamicLineWidthLength);
 			var i;
 			for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
 				if(num < boxNum/2) {
@@ -113,7 +151,7 @@ for(var num = 0; num < boxNum; num++) {
 				array[i-2] = dynamicLineHeightMax;		//y
 				array[i-1] = dynamicLineDepthMin;		//z
 				dynamicLineCounter++;
-				console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+				// console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
 				_debugCounter++;
 				// console.log(i);
 			}
@@ -123,14 +161,14 @@ for(var num = 0; num < boxNum; num++) {
 			var dynamicLineWidthLength = dynamicLineWidthMax - dynamicLineWidthMin;
 			dynamicLineLength += dynamicLineWidthLength;
 			dynamicLineCounter = 0;
-			console.log(dynamicLineWidthLength);
+			// console.log(dynamicLineWidthLength);
 			var i = 0;
 			for(i=(dynamicLineLength - dynamicLineWidthLength)*3 +6; i < dynamicLineLength*3 +6; i = i+3) {
 				array[i-3] = dynamicLineWidthMax - dynamicLineLengthOffset*dynamicLineCounter;		//x
 				array[i-2] = dynamicLineHeightMax;		//y
 				array[i-1] = dynamicLineDepthMin;		//z
 				dynamicLineCounter++;
-				console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
+				// console.log("%d: Array[%d - %d] = {%d, %d, %d}",_debugCounter ,i-3, i-1, array[i-3], array[i-2], array[i-1]);
 				_debugCounter++;
 				// console.log(i);
 			}
@@ -145,48 +183,6 @@ for(var num = 0; num < boxNum; num++) {
 	};
 	drawDynamicLine();
 }
-
-
-//plane
-var plane = new THREE.Mesh(
-	new THREE.PlaneGeometry(500, 500),
-	new THREE.MeshBasicMaterial({color: 0xcccccc})
-);
-plane.rotation.x = -0.5* Math.PI;
-scene.add(plane);
-
-
-
-//camera
-camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
-camera.position.set(0, 70, 125);
-camera.lookAt(scene.position);
-
-
-//mouse contol
-var controls = new THREE.OrbitControls(camera);
-
-
-//light
-var directionalLight = new THREE.DirectionalLight(0xffffff);
-    directionalLight.position.set(0, 0.7, 0.7);
-    scene.add(directionalLight);
-// var ambientLight = new THREE.AmbientLight(0xffffff); // 光源色を指定して生成
-// scene.add(ambientLight);
-
-
-//axes
-var axes = new THREE.AxisHelper(2000);
-scene.add(axes);
-
-
-//renderer
-renderer = new THREE.WebGLRenderer({ antialias: true});
-renderer.setSize(width, height);
-renderer.setClearColor(0x3B3B3D);
-renderer.setPixelRatio(window.devicePixelRatio);
-
-document.getElementById('stage').appendChild(renderer.domElement);
 
 
 // //Debug dynamicLine by Keyboard
