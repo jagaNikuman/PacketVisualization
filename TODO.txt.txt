@@ -1,6 +1,0 @@
-システム・アプリケーションでパケットキャプチャし、Source Distination Protocolの3要素を用意し、ファイルへ書き込む
-
-ハンドラがあればいいな
-そのファイルをjsで読み込み、線を描画
-
-SourceからDiistinationへProtocol色で描画
