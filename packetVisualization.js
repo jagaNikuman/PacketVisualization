@@ -13,7 +13,7 @@ scene = new THREE.Scene();
 //renderer
 renderer = new THREE.WebGLRenderer({ antialias: true});
 renderer.setSize(width, height);
-renderer.setClearColor(0x3B3B3D);
+renderer.setClearColor(0x302e2e);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 document.getElementById('stage').appendChild(renderer.domElement);
@@ -23,7 +23,7 @@ var plane = new THREE.Mesh(
 	new THREE.MeshBasicMaterial({color: 0xcccccc})
 );
 plane.rotation.x = -0.5* Math.PI;
-scene.add(plane);
+// scene.add(plane);
 
 //camera
 camera = new THREE.PerspectiveCamera(45, width/height, 1, 1000);
@@ -32,6 +32,8 @@ camera.lookAt(scene.position);
 
 //mouse contol
 var controls = new THREE.OrbitControls(camera);
+controls.autoRotate = true;
+controls.autoRotateSpeed = 2.0;
 
 //light
 var directionalLight = new THREE.DirectionalLight(0xffffff);
@@ -42,7 +44,7 @@ var directionalLight = new THREE.DirectionalLight(0xffffff);
 
 //axes
 var axes = new THREE.AxisHelper(2000);
-scene.add(axes);
+// scene.add(axes);
 
 //mesh
 // -geometry
@@ -51,7 +53,7 @@ var boxSize = 5;
 var boxSideOffset = 5;
 var boxHeightOffset = 5;
 var boxArray = Array();
-var boxNum = 30;
+var boxNum = 20;
 
 var loader = new THREE.TextureLoader();
 loader.crossOrigin = 'Anonymous';
@@ -59,7 +61,7 @@ var mapTexture = loader.load( 'texture/mario.jpg');
 for(var i = 0; i < boxNum; i++) {
 	var box = new THREE.Mesh(
 		new THREE.BoxGeometry(boxSize, boxSize, boxSize),
-		new THREE.MeshLambertMaterial({color: 0x9aa1ac, wireframe: false,})
+		new THREE.MeshLambertMaterial({color: 0xC5764B, wireframe: false,})
 	);
 	if(i < boxNum/2) {
 		box.position.set(-boxSideOffset * (boxNum - (i * 2 + 1)), boxHeightOffset, 0); 
@@ -71,7 +73,7 @@ for(var i = 0; i < boxNum; i++) {
 }
 
 //sphere
-var sphere = new THREE.Mesh(new THREE.SphereGeometry(5), new THREE.MeshPhongMaterial({color: 0xffffff}));
+var sphere = new THREE.Mesh(new THREE.SphereGeometry(10), new THREE.MeshPhongMaterial({color: 0xffffff}));
 sphere.castShadow = true;
 sphere.receiveShadow = true;
 scene.add(sphere);
@@ -176,7 +178,7 @@ for(var num = 0; num < boxNum; num++) {
 		dynamicLinePointsArray[num] = i/3;
 		dynamicLineGeometry.addGroup(0, 2, 0);
 
-		var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99000, linewidth: 1});
+		var dynamicLineMaterial = new THREE.LineBasicMaterial({color: 0x99c0ff, linewidth: 1});
 		dynamicLineArray[num] = new THREE.Line(dynamicLineGeometry, dynamicLineMaterial);
 
 		scene.add(dynamicLineArray[num]);
